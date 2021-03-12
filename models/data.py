@@ -8,14 +8,16 @@ class Dataset(db.Model):
     bucket_name = db.Column(db.String(255))
     folder_name = db.Column(db.String(255))
     object_name = db.Column(db.String(255))
+    file_name = db.Column(db.String(255))
 
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
     project = db.relationship("Project")
 
-    def __init__(self, bucket_name, folder_name, object_name, project_id):
+    def __init__(self, bucket_name, folder_name, object_name, file_name, project_id):
         self.bucket_name = bucket_name
         self.folder_name = folder_name
         self.object_name = object_name
+        self.file_name = file_name
         self.project_id = project_id
 
     def save(self):

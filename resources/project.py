@@ -47,7 +47,6 @@ class ProjectListResource(Resource):
         project_description = args["project_description"]
         project_type = args["project_type"]
         project_data = args["project_data"]
-
         return project_name, project_description, project_type, project_data
 
     def post(self):
@@ -63,6 +62,7 @@ class ProjectListResource(Resource):
                 bucket_name=uploader.get_bucket_name(), 
                 folder_name=project.location_name, 
                 object_name=uploader.get_object_name(),
+                file_name=project_data.filename,
                 project_id=project.id
             )
         data.save()

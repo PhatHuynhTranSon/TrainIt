@@ -1,3 +1,4 @@
+from resources.project import ProjectListResource
 from flask import Flask
 from flask_restful import Api
 from config import (
@@ -17,6 +18,12 @@ app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
 def create_all_tables_before_requests():
     db.create_all()
 
+# Add resources
+api.add_resource(ProjectListResource, "/projects")
+
 if __name__ == "__main__":
+    # Initialize database
+    db.init_app(app)
+    
     # Don't use debug=True in production
-    app.run(port=3000, debug=True)
+    app.run(port=5000, debug=True)
