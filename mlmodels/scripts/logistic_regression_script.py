@@ -1,4 +1,6 @@
 import argparse
+from numpy import average
+from sklearn.metrics import f1_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
@@ -48,9 +50,19 @@ if __name__ == "__main__":
     clf = LogisticRegression()
     clf.fit(X_train, y_train)
 
+    # Make predictions
+    y_train_prediction = clf.predict(X_train)
+    y_test_prediction = clf.predict(X_test)
+
+    # Calculate f1 score
+    train_f1 = f1_score(y_train, y_train_prediction, average="micro")
+    test_f1 = f1_score(y_test, y_test_prediction, average="micro")
+
     # Emit metrics
     sys.stdout.write(f"Train_accuracy={clf.score(X_train, y_train)};")
     sys.stdout.write(f"Test_accuracy={clf.score(X_test, y_test)};")
+    sys.stdout.write(f"Train_f1={train_f1};")
+    sys.stdout.write(f"Test_f1={test_f1};")
 
     # Save model to dir
     joblib.dump(clf, os.path.join(args.model_dir, "model.joblib"))

@@ -27,3 +27,10 @@ class Dataset(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def get_data_path(self):
+        return f"s3://{self.bucket_name}/{self.folder_name}/train"
+
+    @classmethod
+    def find_data_by_id(cls, data_id):
+        return cls.query.filter_by(id=data_id).first()

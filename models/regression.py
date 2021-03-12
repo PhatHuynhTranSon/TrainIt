@@ -14,6 +14,11 @@ class RegressionProblem(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
     project = db.relationship("Project")
 
+    def __init__(self, job_name, algorithm_name, project_id):
+        self.job_name = job_name
+        self.algorithm_name = algorithm_name
+        self.project_id = project_id
+
     def save(self):
         db.session.add(self)
         db.session.commit()
@@ -21,3 +26,13 @@ class RegressionProblem(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def json(self):
+        return {
+            "id": self.id,
+            "job_name": self.job_name,
+            "algorithm_name": self.algorithm_name,
+            "train_mse": self.train_mse,
+            "test_mse": self.test_mse,
+            "project_id": self.project_id
+        }

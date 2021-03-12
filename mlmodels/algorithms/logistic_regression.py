@@ -29,7 +29,15 @@ class SagemakerLogisticRegression:
                 },
                 {
                     "Name": "test:accuracy",
-                    "Regex": "Test_accuracy=(.*);"
+                    "Regex": "Test_accuracy=(.*?);"
+                },
+                {
+                    "Name": "train:f1",
+                    "Regex": "Train_f1=(.*?);"
+                },
+                {
+                    "Name": "test:f1",
+                    "Regex": "Test_f1=(.*?);"
                 }
             ],
             hyperparameters=self.hyperparameters
