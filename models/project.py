@@ -3,7 +3,7 @@ from uuid import uuid4
 
 
 class Project(db.Model):
-    __tablename__ == "projects"
+    __tablename__ = "projects"
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
