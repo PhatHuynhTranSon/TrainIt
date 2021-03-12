@@ -9,10 +9,12 @@ class Project(db.Model):
     name = db.Column(db.String(255))
     location_name = db.Column(db.String(255)) # This denotes the project location name in s3 bucket
     description = db.Column(db.String(255))
+    type = db.Column(db.String(255))
 
-    def __init__(self, name, description):
+    def __init__(self, name, description, type):
         self.name = name
         self.description = description
+        self.type = type
         self.generate_location_name()
 
     def generate_location_name(self):
@@ -26,3 +28,12 @@ class Project(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "location_name": self.location_name,
+            "description": self.description,
+            "type": self.type
+        }

@@ -12,10 +12,11 @@ class Dataset(db.Model):
     project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
     project = db.relationship("Project")
 
-    def __init__(self, bucket_name, folder_name, object_name):
+    def __init__(self, bucket_name, folder_name, object_name, project_id):
         self.bucket_name = bucket_name
         self.folder_name = folder_name
         self.object_name = object_name
+        self.project_id = project_id
 
     def save(self):
         db.session.add(self)
