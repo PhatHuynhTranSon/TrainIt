@@ -6,7 +6,7 @@ from models.data import Dataset
 from models.solution import Solution
 from models.analytics import Analytics
 
-class SolutionResource(Resource):
+class SolutionListResource(Resource):
     def __init__(self):
         self.create_argument_parser()
 
@@ -101,7 +101,7 @@ class SolutionResource(Resource):
 
         if not solution.analytics_filled():
             analytics = Analytics(solution)
-            solution.update_analytics(analytics)
+            solution.update_analytics(analytics.get_solution_metrics())
 
         return {
             "solution": solution.json()

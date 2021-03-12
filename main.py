@@ -1,4 +1,4 @@
-from resources.solution import SolutionResource
+from resources.solution import SolutionResource, SolutionListResource
 from resources.project import ProjectListResource, ProjectResource
 from flask import Flask
 from flask_restful import Api
@@ -22,7 +22,8 @@ def create_all_tables_before_requests():
 # Add resources
 api.add_resource(ProjectListResource, "/projects")
 api.add_resource(ProjectResource, "/projects/<int:project_id>")
-api.add_resource(SolutionResource, "/projects/<int:project_id>/solutions")
+api.add_resource(SolutionListResource, "/projects/<int:project_id>/solutions")
+api.add_resource(SolutionResource, "/projects/<int:project_id>/solutions/<int:solution_id>")
 
 if __name__ == "__main__":
     # Initialize database
