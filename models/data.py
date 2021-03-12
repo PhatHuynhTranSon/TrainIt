@@ -9,7 +9,7 @@ class Dataset(db.Model):
     folder_name = db.Column(db.String(255))
     object_name = db.Column(db.String(255))
 
-    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"))
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
     project = db.relationship("Project")
 
     def __init__(self, bucket_name, folder_name, object_name):

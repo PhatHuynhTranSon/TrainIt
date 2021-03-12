@@ -13,6 +13,9 @@ class ClassficationProblem(db.Model):
     train_f1 = db.Column(db.Float)
     test_f1 = db.Column(db.Float)
 
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
+    project = db.relationship("Project")
+
     def save(self):
         db.session.add(self)
         db.session.commit()

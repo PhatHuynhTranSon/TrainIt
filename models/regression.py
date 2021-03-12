@@ -11,6 +11,9 @@ class RegressionProblem(db.Model):
     train_mse = db.Column(db.Float)
     test_mse = db.Column(db.Float)
 
+    project_id = db.Column(db.Integer, db.ForeignKey("projects.id"), nullable=False)
+    project = db.relationship("Project")
+
     def save(self):
         db.session.add(self)
         db.session.commit()
