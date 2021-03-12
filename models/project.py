@@ -37,3 +37,7 @@ class Project(db.Model):
             "description": self.description,
             "type": self.type
         }
+
+    @classmethod
+    def find_project_with_id(cls, project_id):
+        return cls.query.filter_by(id=project_id).first()

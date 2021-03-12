@@ -72,4 +72,18 @@ class ProjectListResource(Resource):
         }
 
 
+class ProjectResource(Resource):
+    def project_not_found(self):
+        return {
+            "mesage": "Project not found"
+        }, 404
+    
+    def get(self, project_id):
+        project = Project.find_project_with_id(project_id)
 
+        if not project:
+            return self.project_not_found()
+
+        return {
+            "project": project.json()
+        }
