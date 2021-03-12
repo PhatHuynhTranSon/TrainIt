@@ -36,3 +36,18 @@ class RegressionProblem(db.Model):
             "test_mse": self.test_mse,
             "project_id": self.project_id
         }
+
+    @classmethod
+    def find_solution_with_id(cls, solution_id):
+        return cls.query.filter_by(id=solution_id).first()
+
+    def if_belongs_to(self, project_id):
+        return self.project_id == project_id
+
+    def analytics_filled(self):
+        return self.train_accuracy != None
+
+    def update_analytics(self, analytics):
+        self.train_mse = analytics["train:mse"]
+        self.test_mse = analytics["test:mse"]
+        self.save()

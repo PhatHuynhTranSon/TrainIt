@@ -3,8 +3,8 @@ from flask_restful import Resource, reqparse
 
 from models.project import Project
 from models.data import Dataset
-from models.classification import ClassficationProblem
-from models.regression import RegressionProblem
+from models.solution import Solution
+from models.analytics import Analytics
 
 class SolutionResource(Resource):
     def __init__(self):
@@ -54,7 +54,6 @@ class SolutionResource(Resource):
         if not ModelCreator.if_algorithm_belongs_to_problem_type(project.type, algorithm_name):
             return self.wrong_class_of_algorithm()
 
-        project_type = project.type
         project_data = Dataset.find_data_by_id(project.id)
 
         ml_model = ModelCreator.create_model(
@@ -66,22 +65,52 @@ class SolutionResource(Resource):
 
         training_job_name = ml_model.get_training_name()
 
-        if project_type == "classification":
-            ml_database_model = ClassficationProblem(
-                job_name=training_job_name,
-                algorithm_name=algorithm_name,
-                project_id=project_id
-            )
-        else:
-            ml_database_model = RegressionProblem(
-                job_name=training_job_name,
-                algorithm_name=algorithm_name,
-                project_id=project_id
-            )
+        ml_database_model = Solution(
+            job_name=training_job_name,
+            algorithm_name=algorithm_name,
+            project_id=project_id,
+            type=project.type
+        )
         ml_database_model.save()
 
         return {
             "solution": ml_database_model.json()
         }, 201
         
+
+class SolutionResource(Resource):
+    def project_does_not_exist_response(self):
+        return {
+            "message": "Project does not exist"
+        }, 404
+
+    def solution_does_not_exist_response(self):
+        return {
+            "message": "Solution does not exist"
+        }, 404
+
+    def get(self, project_id, solution_id):
+        project = Project.find_project_with_id(project_id)
+
+        if not project:
+            return self.project_does_not_exist_response()
+
+        solution = Solution.find_solution_with_id(project.type, solution_id)
+        if (not solution) or (not solution.if_belongs_to(project.id)):
+            return self.solution_does_not_exist_response()
+
+        if not solution.analytics_filled():
+            analytics = Analytics(solution)
+            solution.update_analytics(analytics)
+
+        return {
+            "solution": solution.json()
+        }
+
+        
+
+
+
+        
+
 

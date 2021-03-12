@@ -40,3 +40,20 @@ class ClassficationProblem(db.Model):
             "test_f1": self.test_f1,
             "project_id": self.project_id
         }
+
+    @classmethod
+    def find_solution_with_id(cls, solution_id):
+        return cls.query.filter_by(id=solution_id).first()
+
+    def if_belongs_to(self, project_id):
+        return self.project_id == project_id
+
+    def analytics_filled(self):
+        return self.train_accuracy != None
+
+    def update_analytics(self, analytics):
+        self.train_accuracy = analytics["train:accuracy"]
+        self.test_accuracy = analytics["test:accuracy"]
+        self.train_f1 = analytics["train:f1"]
+        self.test_f1 = analytics["test:f1"]
+        self.save()

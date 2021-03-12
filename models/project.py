@@ -41,3 +41,9 @@ class Project(db.Model):
     @classmethod
     def find_project_with_id(cls, project_id):
         return cls.query.filter_by(id=project_id).first()
+
+    def is_classification_problem(self):
+        return self.type == "classification"
+
+    def is_regression_problem(self):
+        return self.type == "regression"
