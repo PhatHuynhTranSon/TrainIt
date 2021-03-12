@@ -104,6 +104,7 @@ class SolutionResource(Resource):
             solution.update_analytics(analytics.get_solution_metrics())
 
         return {
+            "type": project.type,
             "solution": solution.json()
         }
 
