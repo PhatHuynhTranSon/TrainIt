@@ -1,3 +1,4 @@
+from mlmodels.status import Status
 from mlmodels.creator import ModelCreator
 from flask_restful import Resource, reqparse
 
@@ -66,7 +67,7 @@ class SolutionListResource(Resource):
         training_job_name = ml_model.get_training_name()
 
         ml_database_model = Solution(
-            job_name=training_job_name,
+            training_job_name=training_job_name,
             algorithm_name=algorithm_name,
             project_id=project_id,
             type=project.type
@@ -101,12 +102,25 @@ class SolutionResource(Resource):
 
         if not solution.analytics_filled():
             analytics = Analytics(solution)
-            solution.update_analytics(analytics.get_solution_metrics())
 
-        return {
-            "type": project.type,
-            "solution": solution.json()
-        }
+            status = analytics.get_status()
+            main_stats, secondary_stats = status["main_status"], status["secondary_status"]
+            if analytics.solution_has_completed(main_stats):
+                solution.update_analytics(analytics.get_solution_metrics())
+
+            return {
+                "type": project.type,
+                "status": main_stats,
+                "secondary_status": secondary_stats,
+                "solution": solution.json()
+            }
+        else:
+            return {
+                "type": project.type,
+                "status": "Completed",
+                "secondary_status": "Completed",
+                "solution": solution.json()
+            }
 
         
 

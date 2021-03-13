@@ -26,6 +26,9 @@ class Solution:
     def delete(self):
         self.instance.delete()
 
+    def json(self):
+        return self.instance.json()
+
     @classmethod
     def find_solution_with_id(self, type, solution_id):
         if type == "classification":
