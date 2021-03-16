@@ -3,6 +3,7 @@ from resources.solution import SolutionResource, SolutionListResource
 from resources.project import ProjectListResource, ProjectResource
 from flask import Flask
 from flask_restful import Api
+from flask_cors import CORS
 from config import (
     DATABASE_URI
 )
@@ -11,6 +12,9 @@ from database import database as db
 # Create app
 app = Flask(__name__)
 api = Api(app)
+
+# Handle Cross origin requst
+CORS(app)
 
 # Set up database
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
