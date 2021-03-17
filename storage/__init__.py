@@ -37,3 +37,17 @@ class DataUploader:
 
     def get_bucket_name(self):
         return self.s3.bucket
+
+
+class DataDownloader:
+    def __init__(self, folder_name, object_name):
+        self.folder_name = folder_name
+        self.object_name = object_name
+        self.s3 = get_s3_storage()
+
+    def get_path(self):
+        return self.folder_name + "/train/" + self.object_name
+
+    def get_file(self):
+        data_path = self.get_path()
+        return self.s3.get_file(data_path)

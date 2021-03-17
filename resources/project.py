@@ -1,4 +1,5 @@
-from storage import DataUploader
+from preprocessing import DataPreview
+from storage import DataDownloader, DataUploader
 from flask_restful import Resource, reqparse
 import werkzeug
 
@@ -77,13 +78,21 @@ class ProjectResource(Resource):
         return {
             "mesage": "Project not found"
         }, 404
+
+    def get_data_preview(self, project_data):
+        file = DataDownloader(project_data.folder_name, project_data.object_name).get_file()
+        preview = DataPreview(file)
+        return preview.parse()
     
     def get(self, project_id):
         project = Project.find_project_with_id(project_id)
-
         if not project:
             return self.project_not_found()
 
+        project_data = Dataset.find_data_by_id(project.id)
+        project_data_preview = self.get_data_preview(project_data)
+
         return {
-            "project": project.json()
+            "project": project.json(),
+            "data": project_data_preview
         }

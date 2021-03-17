@@ -39,6 +39,13 @@ class S3Storage:
             path
         )
 
+    def get_file(self, path):
+        response = self.s3_client.get_object(
+            Bucket=self.bucket,
+            Key=path
+        )
+        return response["Body"];
+
     def get_bucket(self):
         return self.bucket
 

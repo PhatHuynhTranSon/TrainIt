@@ -31,7 +31,7 @@ if __name__ == "__main__":
                           'This usually indicates that the channel ({}) was incorrectly specified,\n' +
                           'the data specification in S3 was incorrectly specified or the role specified\n' +
                           'does not have permission to access the data.').format(args.train, "train"))
-    raw_data = [ pd.read_csv(file, header=None, engine="python") for file in input_files ]
+    raw_data = [ pd.read_csv(file, header=None, engine="python", skiprows=1 ) for file in input_files ]
     train_data = pd.concat(raw_data)
 
     # Split into X and y
