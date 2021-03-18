@@ -13,9 +13,15 @@ class Status:
             TrainingJobName=self.job_name
         )
 
+    def get_core_parameters(self, parameters):
+        return {
+            parameter: parameters[parameter] for parameter in parameters if not parameter.startswith("sagemaker") 
+        }
+
     def get_status(self):
         response = self.describe_training_job()
         return {
             "main_status": response["TrainingJobStatus"],
-            "secondary_status": response["SecondaryStatus"]
+            "secondary_status": response["SecondaryStatus"],
+            "hyperparameters": self.get_core_parameters(response["HyperParameters"])
         }

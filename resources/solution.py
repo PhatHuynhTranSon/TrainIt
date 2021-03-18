@@ -46,6 +46,15 @@ class SolutionListResource(Resource):
             "message": "Algorithm not available"
         }, 400
 
+    def get(self, project_id):
+        project = Project.find_project_with_id(project_id)
+        if not project:
+            return self.project_not_found()
+
+        return {
+            "solution_ids": Solution.find_solutions_of_projects(project.type, project.id)
+        }
+
     def post(self, project_id):
         project = Project.find_project_with_id(project_id)
         if not project:
@@ -100,27 +109,22 @@ class SolutionResource(Resource):
         if (not solution) or (not solution.if_belongs_to(project.id)):
             return self.solution_does_not_exist_response()
 
-        if not solution.analytics_filled():
-            analytics = Analytics(solution)
+        analytics = Analytics(solution)
+        status = analytics.get_status()
+        main_stats, secondary_stats = status["main_status"], status["secondary_status"]
+        parameters = status["hyperparameters"]
 
-            status = analytics.get_status()
-            main_stats, secondary_stats = status["main_status"], status["secondary_status"]
+        if not solution.analytics_filled():
             if analytics.solution_has_completed(main_stats):
                 solution.update_analytics(analytics.get_solution_metrics())
 
-            return {
-                "type": project.type,
-                "status": main_stats,
-                "secondary_status": secondary_stats,
-                "solution": solution.json()
-            }
-        else:
-            return {
-                "type": project.type,
-                "status": "Completed",
-                "secondary_status": "Completed",
-                "solution": solution.json()
-            }
+        return {
+            "type": project.type,
+            "status": main_stats,
+            "secondary_status": secondary_stats,
+            "parameters": parameters,
+            "solution": solution.json()
+        }
 
         
 

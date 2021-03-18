@@ -1,3 +1,4 @@
+from models.project import Project
 from models.classification import ClassficationProblem
 from models.regression import RegressionProblem
 
@@ -37,5 +38,9 @@ class Solution:
             solution = RegressionProblem.find_solution_with_id(solution_id)
         return solution
 
+    @classmethod
+    def find_solutions_of_projects(self, type, project_id):
+        solution_ids =  ClassficationProblem.find_solutions_of_project(project_id) if type == "classification" else RegressionProblem.find_solutions_of_project(project_id)
+        return solution_ids
     def belongs_to(self, project_id):
         return self.instance.if_belongs_to(project_id)

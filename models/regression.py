@@ -38,8 +38,19 @@ class RegressionProblem(db.Model):
         }
 
     @classmethod
+    def map_solution_to_solution_id(cls, solutions):
+        return [
+            solution.id for solution in solutions
+        ]
+
+    @classmethod
     def find_solution_with_id(cls, solution_id):
         return cls.query.filter_by(id=solution_id).first()
+
+    @classmethod
+    def find_solutions_of_project(cls, project_id):
+        solutions = cls.query.filter_by(project_id=project_id).all()
+        return cls.map_solution_to_solution_id(solutions)
 
     def if_belongs_to(self, project_id):
         return self.project_id == project_id
