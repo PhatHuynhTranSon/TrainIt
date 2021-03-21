@@ -3,7 +3,7 @@ from sagemaker.sklearn.estimator import SKLearn
 from config import aws_role
 
 
-class SagemakerLinearRegression:
+class SagemakerRegression:
     def __init__(self, script_path, data_path, hyperparameters):
         self.script_path = script_path
         self.data_path = data_path

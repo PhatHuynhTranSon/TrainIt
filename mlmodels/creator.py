@@ -1,6 +1,5 @@
-from mlmodels.algorithms.linear_regression import SagemakerLinearRegression
-from mlmodels.algorithms.logistic_regression import SagemakerLogisticRegression
-import os
+from mlmodels.algorithms.regression import SagemakerRegression
+from mlmodels.algorithms.classification import SagemakerClassification
 
 
 class ModelNotFoundException(Exception):
@@ -9,7 +8,7 @@ class ModelNotFoundException(Exception):
 
 class ModelCreator: 
     ALGORITHMS = {
-        "classification": ["logistic_regression"],
+        "classification": ["logistic_regression", "gaussian_naive_bayes"],
         "regression": ["linear_regression"]
     }
 
@@ -18,17 +17,35 @@ class ModelCreator:
         return algorithm in cls.ALGORITHMS[problem_type]
 
     @classmethod
+    def get_algorithm_script(cls, algorithm):
+        if algorithm == "logistic_regression":
+            name = "logistic_regression_script"
+        elif algorithm == "gaussian_naive_bayes":
+            name = "naive_bayes_script"
+        elif algorithm == "linear_regression":
+            name = "linear_regression_script"
+        else:
+            raise ModelNotFoundException()
+
+        return f"mlmodels/scripts/{name}.py"
+
+    @classmethod 
+    def is_classification(cls, algorithm):
+        return algorithm in cls.ALGORITHMS["classification"]
+
+    @classmethod
     def create_model(cls, algorithm_name, data_path, hyperparameters):
-        if algorithm_name == "logistic_regression":
-            return SagemakerLogisticRegression(
-                "mlmodels/scripts/logistic_regression_script.py",
+        algorithm_script = cls.get_algorithm_script(algorithm_name)
+
+        if cls.is_classification(algorithm_name):
+            return SagemakerClassification(
+                algorithm_script,
                 data_path=data_path,
                 hyperparameters=hyperparameters
             )
-        elif algorithm_name == "linear_regression":
-            return SagemakerLinearRegression(
-                "mlmodels/scripts/linear_regression_script.py",
+        else: 
+            return SagemakerRegression(
+                algorithm_script,
                 data_path=data_path,
                 hyperparameters=hyperparameters
             )
-        raise ModelNotFoundException()
