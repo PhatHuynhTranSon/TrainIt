@@ -56,7 +56,7 @@ class RegressionProblem(db.Model):
         return self.project_id == project_id
 
     def analytics_filled(self):
-        return self.train_accuracy != None
+        return self.train_mse != None
 
     def update_analytics(self, analytics):
         self.train_mse = analytics["train:mse"]

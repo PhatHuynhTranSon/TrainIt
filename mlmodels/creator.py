@@ -1,3 +1,4 @@
+from mlmodels.algorithms.linear_regression import SagemakerLinearRegression
 from mlmodels.algorithms.logistic_regression import SagemakerLogisticRegression
 import os
 
@@ -18,10 +19,15 @@ class ModelCreator:
 
     @classmethod
     def create_model(cls, algorithm_name, data_path, hyperparameters):
-        print(os.getcwd())
         if algorithm_name == "logistic_regression":
             return SagemakerLogisticRegression(
                 "mlmodels/scripts/logistic_regression_script.py",
+                data_path=data_path,
+                hyperparameters=hyperparameters
+            )
+        elif algorithm_name == "linear_regression":
+            return SagemakerLinearRegression(
+                "mlmodels/scripts/linear_regression_script.py",
                 data_path=data_path,
                 hyperparameters=hyperparameters
             )
