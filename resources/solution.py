@@ -7,6 +7,7 @@ from models.data import Dataset
 from models.solution import Solution
 from models.analytics import Analytics
 
+
 class SolutionListResource(Resource):
     def __init__(self):
         self.create_argument_parser()
@@ -61,6 +62,7 @@ class SolutionListResource(Resource):
             return self.project_not_found()
 
         algorithm_name, hyperparameters = self.parse_arguments()
+
         if not ModelCreator.if_algorithm_belongs_to_problem_type(project.type, algorithm_name):
             return self.wrong_class_of_algorithm()
 
@@ -82,11 +84,11 @@ class SolutionListResource(Resource):
             type=project.type
         )
         ml_database_model.save()
-
+        
         return {
             "solution": ml_database_model.json()
         }, 201
-        
+
 
 class SolutionResource(Resource):
     def project_does_not_exist_response(self):

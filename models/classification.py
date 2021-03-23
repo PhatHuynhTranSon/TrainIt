@@ -53,7 +53,7 @@ class ClassficationProblem(db.Model):
 
     @classmethod
     def find_solutions_of_project(cls, project_id):
-        solutions = cls.query.filter_by(project_id=project_id).all()
+        solutions = cls.query.filter_by(project_id=project_id).order_by(ClassficationProblem.id.desc()).all()
         return cls.map_solution_to_solution_id(solutions)
 
     def if_belongs_to(self, project_id):

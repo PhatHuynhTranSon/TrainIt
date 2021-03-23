@@ -19,12 +19,12 @@ if __name__ == "__main__":
     parser.add_argument("--criterion", type=str, default="gini")
     parser.add_argument("--splitter", type=str, default="best")
     parser.add_argument("--max-depth", type=int, default=None)
-    parser.add_argument("--min-samples-split", type=float, default=2)
-    parser.add_argument("--min-samples-leaf", type=float, default=1)
+    parser.add_argument("--min-samples-split", type=float, default=2.0)
+    parser.add_argument("--min-samples-leaf", type=float, default=1.0)
     parser.add_argument("--min-weight-fraction-leaf", type=float, default=0.0)
     parser.add_argument("--max-features", type=float, default=None)
     parser.add_argument("--max-leaf-nodes", type=int, default=None)
-    parser.add_argument("--min-impurity-decrease", type=float, default=0)
+    parser.add_argument("--min-impurity-decrease", type=float, default=0.0)
 
     # Parser environment variables by Amazon Sagemaker
     parser.add_argument('--output-data-dir', type=str, default=os.environ.get('SM_OUTPUT_DATA_DIR'))
