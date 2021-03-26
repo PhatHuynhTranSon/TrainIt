@@ -42,5 +42,13 @@ class Solution:
     def find_solutions_of_projects(self, type, project_id):
         solution_ids =  ClassficationProblem.find_solutions_of_project(project_id) if type == "classification" else RegressionProblem.find_solutions_of_project(project_id)
         return solution_ids
+
+    @classmethod
+    def find_best_solution_of_project(self, type, project_id):
+        if type == "classification":
+            return ClassficationProblem.find_best_solution_of_project(project_id)
+        else:
+            return RegressionProblem.find_best_solution_of_project(project_id)
+
     def belongs_to(self, project_id):
         return self.instance.if_belongs_to(project_id)

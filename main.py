@@ -1,3 +1,4 @@
+from resources.deployment import DeploymentResource
 from resources.preview import DataPreviewRersource
 from resources.solution import SolutionResource, SolutionListResource
 from resources.project import ProjectListResource, ProjectResource
@@ -27,6 +28,7 @@ def create_all_tables_before_requests():
 # Add resources
 api.add_resource(ProjectListResource, "/projects")
 api.add_resource(ProjectResource, "/projects/<int:project_id>")
+api.add_resource(DeploymentResource, "/projects/<int:project_id>/deploy")
 api.add_resource(SolutionListResource, "/projects/<int:project_id>/solutions")
 api.add_resource(SolutionResource, "/projects/<int:project_id>/solutions/<int:solution_id>")
 api.add_resource(DataPreviewRersource, "/preview")

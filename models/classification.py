@@ -56,6 +56,11 @@ class ClassficationProblem(db.Model):
         solutions = cls.query.filter_by(project_id=project_id).order_by(ClassficationProblem.id.desc()).all()
         return cls.map_solution_to_solution_id(solutions)
 
+    @classmethod
+    def find_best_solution_of_project(cls, project_id):
+        best_solution = cls.query.filter_by(project_id=project_id).filter(cls.test_accuracy != None).order_by(cls.test_accuracy.desc()).first()
+        return best_solution
+
     def if_belongs_to(self, project_id):
         return self.project_id == project_id
 

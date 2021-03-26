@@ -1,11 +1,15 @@
 from sagemaker.sklearn.model import SKLearnModel
 from s3 import get_sagemaker_session, get_sagemaker_client
-from config import aws_role
+from config import aws_role, aws_sagemaker_bucket
 
+class ScriptNotFoundException(Exception):
+    pass
+
+def get_model_artifact_path(job_name):
+    return f"s3://{aws_sagemaker_bucket}/{job_name}/output/model.tar.gz"
 
 class ModelNotDeployedException(Exception):
     pass
-
 
 class Deployment:
     def __init__(self, model_path, script_path):
@@ -50,5 +54,9 @@ class DeploymentStatus:
         )
         status = self.extract_status(response)
         return status
+
+    @classmethod
+    def in_transition_state(cls, status):
+        return status not in ["OutOfService", "InService", "Failed"]
 
 

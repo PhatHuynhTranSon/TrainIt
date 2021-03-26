@@ -52,6 +52,11 @@ class RegressionProblem(db.Model):
         solutions = cls.query.filter_by(project_id=project_id).all()
         return cls.map_solution_to_solution_id(solutions)
 
+    @classmethod
+    def find_best_solution_of_project(cls, project_id):
+        best_solution = cls.query.filter_by(project_id=project_id).filter(cls.test_mse != None).order_by(cls.test_mse.desc()).first()
+        return best_solution
+
     def if_belongs_to(self, project_id):
         return self.project_id == project_id
 
