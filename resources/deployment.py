@@ -32,7 +32,10 @@ class DeploymentResource(Resource):
     def get(self, project_id):
         deployment_model = DeploymentModel.find_by_project_id(project_id)
         if not deployment_model:
-            return self.no_deployed_model_message()
+            return {
+                "deployed": False,
+                "deployment": None
+            }
         
         # Update status if possible
         if DeploymentStatus.in_transition_state(deployment_model.status):
@@ -42,6 +45,7 @@ class DeploymentResource(Resource):
             deployment_model.update_status(new_status)
 
         return {
+            "deployed": True,
             "deployment": deployment_model.json()
         }, 200
 
