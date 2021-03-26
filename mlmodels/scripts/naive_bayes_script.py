@@ -66,3 +66,9 @@ if __name__ == "__main__":
 
     # Save model to dir
     joblib.dump(clf, os.path.join(args.model_dir, "model.joblib"))
+
+
+# Model function to load the model
+def model_fn(model_dir):
+    clf = joblib.load(os.path.join(model_dir, "model.joblib"))
+    return clf
