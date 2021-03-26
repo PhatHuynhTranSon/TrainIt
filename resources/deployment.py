@@ -1,3 +1,4 @@
+from mlmodels.predictor import Predictor
 from models.deployment import DeploymentModel
 from mlmodels.creator import ModelCreator
 from mlmodels.deployment import Deployment, DeploymentStatus, get_model_artifact_path
@@ -22,6 +23,11 @@ class DeploymentResource(Resource):
         return {
             "message": "No deployed model found"
         }, 404
+
+    def already_deployed_message(self):
+        return {
+            "message": "This project has already been deployed"
+        }, 400
 
     def get(self, project_id):
         deployment_model = DeploymentModel.find_by_project_id(project_id)
@@ -48,6 +54,9 @@ class DeploymentResource(Resource):
         if not best_solution:
             return self.solution_not_finish_message()
 
+        if DeploymentModel.if_a_deployment_exist(project.id):
+            return self.already_deployed_message()
+
         model_artifact_path = get_model_artifact_path(best_solution.job_name)
         script_path = ModelCreator.get_algorithm_script(best_solution.algorithm_name)
 
@@ -69,3 +78,20 @@ class DeploymentResource(Resource):
         return {
             "deployment": deployment_model.json()
         }, 201
+
+    def delete(self, project_id):
+        project = Project.find_project_with_id(project_id)
+        if not project:
+            return self.project_does_not_exist_message()
+
+        deployment_model = DeploymentModel.find_by_project_id(project.id)
+        endpoint_name = deployment_model.endpoint_name
+
+        predictor = Predictor(endpoint_name)
+        predictor.undeploy()
+
+        deployment_model.delete()
+
+        return {
+            "message": "Successfully deleted the endpoint"
+        }, 200

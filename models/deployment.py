@@ -37,4 +37,8 @@ class DeploymentModel(db.Model):
     def find_by_project_id(cls, project_id):
         return cls.query.filter_by(project_id=project_id).first()
 
+    @classmethod
+    def if_a_deployment_exist(cls, project_id):
+        return cls.query.filter_by(project_id=project_id).first() != None
+
     
