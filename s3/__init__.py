@@ -18,6 +18,11 @@ def get_boto_session():
     return session
 
 
+def get_sagemaker_client():
+    session = get_boto_session()
+    return session.client('sagemaker')
+
+
 def get_sagemaker_session():
     boto_session = get_boto_session()
     sagemaker_session = sagemaker.Session(
