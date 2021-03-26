@@ -1,7 +1,10 @@
+from resources.prediction import OnlinePredictionResource
 from resources.deployment import DeploymentResource
 from resources.preview import DataPreviewRersource
 from resources.solution import SolutionResource, SolutionListResource
 from resources.project import ProjectListResource, ProjectResource
+
+
 from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
@@ -32,6 +35,7 @@ api.add_resource(DeploymentResource, "/projects/<int:project_id>/deploy")
 api.add_resource(SolutionListResource, "/projects/<int:project_id>/solutions")
 api.add_resource(SolutionResource, "/projects/<int:project_id>/solutions/<int:solution_id>")
 api.add_resource(DataPreviewRersource, "/preview")
+api.add_resource(OnlinePredictionResource, "/projects/<int:project_id>/prediction/online")
 
 if __name__ == "__main__":
     # Initialize database
