@@ -19,7 +19,7 @@ class OnlinePredictionResource(Resource):
             location="json"
         )
 
-    def get(self, project_id):
+    def post(self, project_id):
         project = Project.find_project_with_id(project_id)
         if not project:
             return self.project_does_not_exist_message()
