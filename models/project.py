@@ -10,6 +10,7 @@ class Project(db.Model):
     location_name = db.Column(db.String(255)) # This denotes the project location name in s3 bucket
     description = db.Column(db.String(255))
     type = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
 
     def __init__(self, name, description, type):
         self.name = name
