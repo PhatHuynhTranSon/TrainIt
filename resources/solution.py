@@ -1,4 +1,5 @@
-from mlmodels.status import Status
+from flask_jwt_extended.utils import get_jwt_identity
+from flask_jwt_extended.view_decorators import jwt_required
 from mlmodels.creator import ModelCreator
 from flask_restful import Resource, reqparse
 
@@ -37,9 +38,9 @@ class SolutionListResource(Resource):
 
         return algorithm_name, hyperparameters
 
-    def project_not_found(self):
+    def project_does_not_exist_response(self):
         return {
-            "message": "Project not found"
+            "message": "Project does not exist"
         }, 404
 
     def wrong_class_of_algorithm(self):
@@ -47,19 +48,23 @@ class SolutionListResource(Resource):
             "message": "Algorithm not available"
         }, 400
 
+    @jwt_required()
     def get(self, project_id):
         project = Project.find_project_with_id(project_id)
-        if not project:
-            return self.project_not_found()
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
 
         return {
             "solution_ids": Solution.find_solutions_of_projects(project.type, project.id)
         }
 
+    @jwt_required()
     def post(self, project_id):
         project = Project.find_project_with_id(project_id)
-        if not project:
-            return self.project_not_found()
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
 
         algorithm_name, hyperparameters = self.parse_arguments()
 
@@ -101,14 +106,15 @@ class SolutionResource(Resource):
             "message": "Solution does not exist"
         }, 404
 
+    @jwt_required()
     def get(self, project_id, solution_id):
         project = Project.find_project_with_id(project_id)
-
-        if not project:
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
             return self.project_does_not_exist_response()
 
         solution = Solution.find_solution_with_id(project.type, solution_id)
-        if (not solution) or (not solution.if_belongs_to(project.id)):
+        if not solution or not solution.if_belongs_to(project.id):
             return self.solution_does_not_exist_response()
 
         analytics = Analytics(solution)

@@ -1,3 +1,5 @@
+from flask_jwt_extended.utils import get_jwt_identity
+from flask_jwt_extended.view_decorators import jwt_required
 from preprocessing import DataPreview
 from storage import DataDownloader, DataUploader
 from flask_restful import Resource, reqparse
@@ -50,10 +52,13 @@ class ProjectListResource(Resource):
         project_data = args["project_data"]
         return project_name, project_description, project_type, project_data
 
+    @jwt_required()
     def post(self):
+        user_id = get_jwt_identity()
+
         project_name, project_description, project_type, project_data = self.parse_arguments()   
 
-        project = Project(project_name, project_description, project_type)
+        project = Project(project_name, project_description, project_type, user_id)
         project.save()
 
         uploader = DataUploader(project.location_name, project_data)
@@ -72,11 +77,20 @@ class ProjectListResource(Resource):
             "project": project.json()
         }
 
+    @jwt_required()
+    def get(self):
+        user_id = get_jwt_identity()
+        projects = Project.find_project_from_user(user_id)
+
+        return {
+            "projects": [project.json() for project in projects]
+        }
+
 
 class ProjectResource(Resource):
-    def project_not_found(self):
+    def project_does_not_exist_response(self):
         return {
-            "mesage": "Project not found"
+            "message": "Project does not exist"
         }, 404
 
     def get_data_preview(self, project_data):
@@ -84,10 +98,12 @@ class ProjectResource(Resource):
         preview = DataPreview(file)
         return preview.parse()
     
+    @jwt_required()
     def get(self, project_id):
         project = Project.find_project_with_id(project_id)
-        if not project:
-            return self.project_not_found()
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
 
         project_data = Dataset.find_data_by_id(project.id)
         project_data_preview = self.get_data_preview(project_data)

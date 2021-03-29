@@ -1,3 +1,5 @@
+from flask_jwt_extended.view_decorators import jwt_required
+from flask_jwt_extended import get_jwt_identity
 from mlmodels.predictor import Predictor
 from models.deployment import DeploymentModel
 from mlmodels.creator import ModelCreator
@@ -9,7 +11,7 @@ from models.solution import Solution
 
 
 class DeploymentResource(Resource):
-    def project_does_not_exist_message(self):
+    def project_does_not_exist_response(self):
         return {
             "message": "Project does not exist"
         }, 404 
@@ -29,7 +31,13 @@ class DeploymentResource(Resource):
             "message": "This project has already been deployed"
         }, 400
 
+    @jwt_required()
     def get(self, project_id):
+        project = Project.find_project_with_id(project_id)
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
+
         deployment_model = DeploymentModel.find_by_project_id(project_id)
         if not deployment_model:
             return {
@@ -49,10 +57,12 @@ class DeploymentResource(Resource):
             "deployment": deployment_model.json()
         }, 200
 
+    @jwt_required()
     def post(self, project_id):
         project = Project.find_project_with_id(project_id)
-        if not project:
-            return self.project_does_not_exist_message()
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
 
         best_solution = Solution.find_best_solution_of_project(project.type, project.id)
         if not best_solution:
@@ -83,10 +93,12 @@ class DeploymentResource(Resource):
             "deployment": deployment_model.json()
         }, 201
 
+    @jwt_required()
     def delete(self, project_id):
         project = Project.find_project_with_id(project_id)
-        if not project:
-            return self.project_does_not_exist_message()
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
 
         deployment_model = DeploymentModel.find_by_project_id(project.id)
         endpoint_name = deployment_model.endpoint_name

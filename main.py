@@ -5,12 +5,14 @@ from resources.preview import DataPreviewRersource
 from resources.solution import SolutionResource, SolutionListResource
 from resources.project import ProjectListResource, ProjectResource
 
+from flask_jwt_extended import JWTManager
 
 from flask import Flask
 from flask_restful import Api
 from flask_cors import CORS
 from config import (
-    DATABASE_URI
+    DATABASE_URI,
+    JWT_SECRET
 )
 from database import database as db
 from hashing import bcrypt
@@ -32,6 +34,10 @@ def create_all_tables_before_requests():
 
 # Set up password hashing
 bcrypt.init_app(app)
+
+# Set JWT
+app.config["JWT_SECRET_KEY"] = JWT_SECRET
+jwt = JWTManager(app)
 
 # Add resources
 api.add_resource(ProjectListResource, "/projects")
