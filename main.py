@@ -1,3 +1,4 @@
+from resources.payment import PaymentResource
 from resources.authentication import UserSigninResource, UserSignupResource
 from resources.prediction import OnlinePredictionResource
 from resources.deployment import DeploymentResource
@@ -52,6 +53,8 @@ api.add_resource(OnlinePredictionResource, "/projects/<int:project_id>/predictio
 
 api.add_resource(UserSignupResource, "/users/signup")
 api.add_resource(UserSigninResource, "/users/signin")
+
+api.add_resource(PaymentResource, "/tokens")
 
 if __name__ == "__main__":
     # Initialize database

@@ -8,6 +8,7 @@ class UserModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(255), nullable=False)
+    tokens = db.Column(db.Integer, default=0)
     _password = db.Column(db.String(255), nullable=False)
 
     @hybrid_property
@@ -22,6 +23,10 @@ class UserModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def increase_tokens(self, tokens):
+        self.tokens += tokens;
+        self.save()
+
     def delete(self):
         db.session.delete(self)
         db.session.commit()
@@ -32,7 +37,8 @@ class UserModel(db.Model):
     def json(self):
         return {
             "email": self.email,
-            "username": self.username
+            "username": self.username,
+            "tokens": self.tokens
         }
 
     @classmethod
