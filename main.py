@@ -61,4 +61,4 @@ if __name__ == "__main__":
     db.init_app(app)
 
     # Don't use debug=True in production
-    app.run(port=5000, debug=True)
+    app.run(port=5000, host="0.0.0.0", debug=True)

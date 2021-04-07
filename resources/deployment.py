@@ -8,6 +8,7 @@ from flask_restful import Resource
 
 from models.project import Project
 from models.solution import Solution
+from models.user import UserModel
 
 
 class DeploymentResource(Resource):
@@ -29,6 +30,11 @@ class DeploymentResource(Resource):
     def already_deployed_message(self):
         return {
             "message": "This project has already been deployed"
+        }, 400
+
+    def not_enough_tokens(self):
+        return {
+            "message": "Not enough tokens for deployment"
         }, 400
 
     @jwt_required()
@@ -64,6 +70,11 @@ class DeploymentResource(Resource):
         if not project or not project.belongs_to_user(user_id):
             return self.project_does_not_exist_response()
 
+        # Check if user have enough tokens
+        user = UserModel.find_user_with_id(user_id);
+        if user.tokens == 0:
+            return self.not_enough_tokens()
+
         best_solution = Solution.find_best_solution_of_project(project.type, project.id)
         if not best_solution:
             return self.solution_not_finish_message()
@@ -88,6 +99,9 @@ class DeploymentResource(Resource):
             endpoint_name=endpoint_name
         )
         deployment_model.save()
+
+        # Decrease user tokens by 1
+        user.increase_tokens(-1);
 
         return {
             "deployment": deployment_model.json()

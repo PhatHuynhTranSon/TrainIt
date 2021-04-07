@@ -1,3 +1,4 @@
+from models.user import UserModel
 from flask_jwt_extended.utils import get_jwt_identity
 from flask_jwt_extended.view_decorators import jwt_required
 from mlmodels.creator import ModelCreator
@@ -48,6 +49,11 @@ class SolutionListResource(Resource):
             "message": "Algorithm not available"
         }, 400
 
+    def not_enough_tokens(self):
+        return {
+            "message": "Not enough tokens to train model"
+        }, 400
+
     @jwt_required()
     def get(self, project_id):
         project = Project.find_project_with_id(project_id)
@@ -65,6 +71,11 @@ class SolutionListResource(Resource):
         user_id = get_jwt_identity()
         if not project or not project.belongs_to_user(user_id):
             return self.project_does_not_exist_response()
+
+        # Check if user have enough tokens
+        user = UserModel.find_user_with_id(user_id);
+        if user.tokens == 0:
+            return self.not_enough_tokens()
 
         algorithm_name, hyperparameters = self.parse_arguments()
 
@@ -89,6 +100,9 @@ class SolutionListResource(Resource):
             type=project.type
         )
         ml_database_model.save()
+
+        # One model trained -> Decrease user tokens by 1
+        user.increase_tokens(-1);
         
         return {
             "solution": ml_database_model.json()
