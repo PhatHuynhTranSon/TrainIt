@@ -1,3 +1,4 @@
+from resources.notebook import NotebookListResource, NotebookResource, NotebookStartResource, NotebookStopResource, NotebookUrlResource
 from resources.payment import PaymentResource
 from resources.authentication import UserSigninResource, UserSignupResource
 from resources.prediction import OnlinePredictionResource
@@ -55,6 +56,12 @@ api.add_resource(UserSignupResource, "/users/signup")
 api.add_resource(UserSigninResource, "/users/signin")
 
 api.add_resource(PaymentResource, "/tokens")
+
+api.add_resource(NotebookListResource, "/notebooks")
+api.add_resource(NotebookResource, "/notebooks/<int:notebook_id>")
+api.add_resource(NotebookStartResource, "/notebooks/start/<int:notebook_id>")
+api.add_resource(NotebookStopResource, "/notebooks/stop/<int:notebook_id>")
+api.add_resource(NotebookUrlResource, "/notebooks/url/<int:notebook_id>")
 
 if __name__ == "__main__":
     # Initialize database
