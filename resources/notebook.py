@@ -25,6 +25,20 @@ class NotebookListResource(Resource):
         return self.parser.parse_args()
 
     @jwt_required()
+    def get(self):
+        # Get user id
+        user_id = get_jwt_identity()
+
+        # Get all notebooks belonging to user
+        notebooks = NotebookModel.find_by_user_id(user_id)
+
+        # Return user id
+        return {
+            "notebook_ids": [notebook.id for notebook in notebooks]
+        }
+
+
+    @jwt_required()
     def post(self):
         # Get user id
         user_id = get_jwt_identity()
