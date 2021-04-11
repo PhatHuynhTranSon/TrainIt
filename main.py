@@ -4,7 +4,7 @@ from resources.authentication import UserSigninResource, UserSignupResource
 from resources.prediction import OnlinePredictionResource
 from resources.deployment import DeploymentResource
 from resources.preview import DataPreviewRersource
-from resources.solution import SolutionResource, SolutionListResource
+from resources.solution import SolutionDownloadResource, SolutionResource, SolutionListResource
 from resources.project import ProjectListResource, ProjectResource
 
 from flask_jwt_extended import JWTManager
@@ -47,6 +47,7 @@ api.add_resource(ProjectResource, "/projects/<int:project_id>")
 
 api.add_resource(DeploymentResource, "/projects/<int:project_id>/deploy")
 api.add_resource(SolutionListResource, "/projects/<int:project_id>/solutions")
+api.add_resource(SolutionDownloadResource, "/projects/<int:project_id>/solutions/<int:solution_id>/download")
 api.add_resource(SolutionResource, "/projects/<int:project_id>/solutions/<int:solution_id>")
 
 api.add_resource(DataPreviewRersource, "/preview")

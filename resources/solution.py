@@ -1,3 +1,4 @@
+from mlmodels.downloader import SolutionDownloader
 from models.user import UserModel
 from flask_jwt_extended.utils import get_jwt_identity
 from flask_jwt_extended.view_decorators import jwt_required
@@ -148,6 +149,39 @@ class SolutionResource(Resource):
             "solution": solution.json()
         }
 
+
+class SolutionDownloadResource(Resource):
+    def project_does_not_exist_response(self):
+        return {
+            "message": "Project does not exist"
+        }, 404
+
+    def solution_does_not_exist_response(self):
+        return {
+            "message": "Solution does not exist"
+        }, 404
+    
+    @jwt_required()
+    def get(self, project_id, solution_id):
+        # Check if project belongs to correct user
+        project = Project.find_project_with_id(project_id)
+        user_id = get_jwt_identity()
+        if not project or not project.belongs_to_user(user_id):
+            return self.project_does_not_exist_response()
+
+        # Check if solution belongs to project
+        solution = Solution.find_solution_with_id(project.type, solution_id)
+        if not solution or not solution.if_belongs_to(project.id):
+            return self.solution_does_not_exist_response()
+
+        # Get download link
+        downloader = SolutionDownloader(solution)
+        download_url = downloader.get_solution_url()
+
+        # Return 
+        return {
+            "url": download_url
+        }, 201 # Created URL
         
 
 

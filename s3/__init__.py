@@ -6,6 +6,7 @@ from config import (
     aws_bucket,
     region_name
 )
+from botocore.config import Config
 
 
 # Handling of session
@@ -23,6 +24,15 @@ def get_sagemaker_client():
     return session.client('sagemaker')
 
 
+def get_s3_client():
+    # Get configuration to use Sginature-V4
+    config = Config(
+        signature_version='s3v4'
+    )
+    session = get_boto_session()
+    return session.client('s3', config=config)
+
+
 def get_sagemaker_session():
     boto_session = get_boto_session()
     sagemaker_session = sagemaker.Session(
@@ -30,12 +40,12 @@ def get_sagemaker_session():
     )
     return sagemaker_session
 
+
 # Handling of s3 bucket
 class S3Storage:
     def __init__(self, bucket):
         self.bucket = bucket
-        self.boto_session = get_boto_session()
-        self.s3_client = self.boto_session.client("s3")
+        self.s3_client = get_s3_client()
 
     def upload_file(self, path, file):
         self.s3_client.upload_fileobj(
