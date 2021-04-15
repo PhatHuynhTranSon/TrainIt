@@ -9,7 +9,7 @@ class ModelNotFoundException(Exception):
 class ModelCreator: 
     ALGORITHMS = {
         "classification": ["logistic_regression", "gaussian_naive_bayes", "decision_tree_classification"],
-        "regression": ["linear_regression", "decision_tree_regression"]
+        "regression": ["linear_regression", "decision_tree_regression", "elastic_net_regression"]
     }
 
     @classmethod
@@ -28,6 +28,8 @@ class ModelCreator:
             name = "decision_tree_regression_script"
         elif algorithm == "decision_tree_classification":
             name = "decision_tree_classification_script"
+        elif algorithm == "elastic_net_regression":
+            name = "elastic_net_regression_script"
         else:
             raise ModelNotFoundException()
 
