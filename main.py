@@ -14,7 +14,8 @@ from flask_restful import Api
 from flask_cors import CORS
 from config import (
     DATABASE_URI,
-    JWT_SECRET
+    JWT_SECRET,
+    JWT_EXPIRATION
 )
 from database import database as db
 from hashing import bcrypt
@@ -39,6 +40,7 @@ bcrypt.init_app(app)
 
 # Set JWT
 app.config["JWT_SECRET_KEY"] = JWT_SECRET
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = JWT_EXPIRATION
 jwt = JWTManager(app)
 
 # Add resources
